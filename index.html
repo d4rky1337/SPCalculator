@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate SP Calculator</title>
+    <title>PointsLegends SP Calculator</title>
     <style>
         :root {
             --bg: #0b0e14;
             --card: #161b22;
             --input-bg: #0d1117;
-            --accent: #00f2ff; /* Neon Cyan */
+            --accent: #00f2ff;
             --accent-glow: rgba(0, 242, 255, 0.3);
+            --secondary: #ffd700; /* Gold for hits/damage */
             --text-main: #ffffff;
             --text-dim: #8b949e;
             --border: #30363d;
@@ -38,7 +39,6 @@
             border-radius: 20px;
             border: 1px solid var(--border);
             box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-            position: relative;
         }
 
         header { text-align: center; margin-bottom: 2rem; }
@@ -51,72 +51,59 @@
             background: rgba(0, 0, 0, 0.4);
             border-radius: 16px;
             padding: 1.5rem;
-            text-align: center;
             margin-bottom: 2rem;
             border: 1px solid var(--border);
-            position: relative;
-            overflow: hidden;
         }
 
-        .result-display::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 4px;
-            background: linear-gradient(90deg, transparent, var(--accent), transparent);
-        }
-
-        .main-stat .label { 
-            display: block; 
-            font-size: 0.8rem; 
-            text-transform: uppercase; 
-            letter-spacing: 1px;
-            color: var(--text-dim); 
-            margin-bottom: 5px;
-        }
-        
-        .main-stat .value { 
-            font-size: 3.5rem; 
-            font-weight: 800; 
-            color: var(--accent);
-            text-shadow: 0 0 20px var(--accent-glow);
-            line-height: 1.1;
-        }
-
-        .sub-stats {
+        .result-row {
             display: flex;
             justify-content: space-between;
-            margin-top: 1.5rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border);
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
         }
+        .result-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
 
-        .stat-box { flex: 1; text-align: center; }
-        .stat-box span { display: block; font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; }
-        .stat-box strong { display: block; font-size: 1.1rem; margin-top: 4px; color: #e6edf3; }
+        .res-box { text-align: center; flex: 1; }
+        .res-box .label { display: block; font-size: 0.7rem; text-transform: uppercase; color: var(--text-dim); margin-bottom: 5px;}
+        .res-box .value { font-size: 1.4rem; font-weight: 800; color: #fff; }
+        
+        .big-value { font-size: 2rem; color: var(--accent); text-shadow: 0 0 10px var(--accent-glow); }
+        .gold-value { color: var(--secondary); text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
 
         /* Inputs */
         .group { margin-bottom: 1.2rem; position: relative; }
         label { display: block; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.5rem; text-transform: uppercase; font-weight: 600; }
 
+        /* Text Input styling */
+        .stat-input {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            color: var(--secondary);
+            font-size: 1.1rem;
+            padding: 12px 16px;
+            border-radius: 8px;
+            outline: none;
+            box-sizing: border-box;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .stat-input:focus { border-color: var(--secondary); }
+
+        /* Dropdown Styling */
         .custom-dropdown {
             background: var(--input-bg);
             border: 1px solid var(--border);
             border-radius: 8px;
             cursor: pointer;
-            transition: 0.2s;
             position: relative;
         }
-
-        .custom-dropdown:hover { border-color: var(--text-dim); }
-
         .selected { padding: 12px 16px; font-size: 0.95rem; user-select: none; }
-
-        /* Dropdown Menu & Search */
+        
         .options-container {
             position: absolute;
-            top: 105%;
-            left: 0;
-            width: 100%;
+            top: 105%; left: 0; width: 100%;
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: 8px;
@@ -125,89 +112,63 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.8);
             overflow: hidden;
         }
-
+        .options-container.active { display: block; }
+        
         .search-bar {
-            width: 100%;
-            padding: 12px 16px;
-            background: #090c10;
-            border: none;
+            width: 100%; padding: 12px 16px;
+            background: #090c10; border: none;
             border-bottom: 1px solid var(--border);
-            color: var(--text-main);
-            outline: none;
-            font-size: 0.9rem;
+            color: var(--text-main); outline: none;
             box-sizing: border-box;
         }
-
-        .search-bar::placeholder { color: #484f58; }
-
-        .options {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            max-height: 220px;
-            overflow-y: auto;
-        }
-
-        /* Scrollbar styling */
-        .options::-webkit-scrollbar { width: 8px; }
-        .options::-webkit-scrollbar-track { background: var(--input-bg); }
-        .options::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-
-        .options li {
-            padding: 10px 16px;
-            font-size: 0.9rem;
-            transition: background 0.1s;
-        }
-
-        .options li:hover { background: var(--hover); color: white; }
+        .options { list-style: none; padding: 0; margin: 0; max-height: 200px; overflow-y: auto; }
+        .options li { padding: 10px 16px; font-size: 0.9rem; }
+        .options li:hover { background: var(--hover); color: white; cursor: pointer; }
 
         .separator {
-            display: flex;
-            align-items: center;
-            text-align: center;
-            color: var(--text-dim);
-            font-size: 0.75rem;
-            font-weight: 700;
-            margin: 2rem 0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            display: flex; align-items: center; text-align: center;
+            color: var(--text-dim); font-size: 0.75rem; font-weight: 700;
+            margin: 2rem 0; text-transform: uppercase; letter-spacing: 1px;
         }
-
-        .separator::before, .separator::after {
-            content: '';
-            flex: 1;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .separator:not(:empty)::before { margin-right: 1em; }
-        .separator:not(:empty)::after { margin-left: 1em; }
-
-        /* Animation */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
-        .options-container.active { display: block; animation: fadeIn 0.2s ease-out; }
+        .separator::before, .separator::after { content: ''; flex: 1; border-bottom: 1px solid var(--border); }
+        .separator::before { margin-right: 1em; } .separator::after { margin-left: 1em; }
     </style>
 </head>
 <body>
 
     <div class="calculator-card">
         <header>
-            <h1>SP <span class="accent">CALCULATOR</span></h1>
-            <p>Calculate required stats to dominate</p>
+            <h1>PointsLegends <span class="accent">SP CALCULATOR</span></h1>
+            <p>Calculate Damage & Requirements</p>
         </header>
 
         <section class="result-display">
-            <div class="main-stat">
-                <span class="label">Required Skill Points (SP)</span>
-                <div id="requiredSP" class="value">0</div>
-            </div>
-            <div class="sub-stats">
-                <div class="stat-box">
-                    <span>Target Health</span>
-                    <strong id="targetHP">-</strong>
+            <div class="result-row">
+                <div class="res-box">
+                    <span class="label">Your Damage</span>
+                    <div id="dmgDisplay" class="value gold-value">0</div>
                 </div>
-                <div class="stat-box">
-                    <span>Target Resist</span>
-                    <strong id="targetRes">-</strong>
+                <div class="res-box">
+                    <span class="label">Hits to Kill</span>
+                    <div id="hitsDisplay" class="value gold-value">0</div>
+                </div>
+            </div>
+
+            <div class="result-row">
+                <div class="res-box">
+                    <span class="label">SP For One-Shot</span>
+                    <div id="requiredSP" class="value big-value">0</div>
+                </div>
+            </div>
+
+            <div class="result-row" style="margin-bottom:0; border:none;">
+                <div class="res-box">
+                    <span class="label">Target HP</span>
+                    <div id="targetHP">-</div>
+                </div>
+                <div class="res-box">
+                    <span class="label">Resist</span>
+                    <div id="targetRes">-</div>
                 </div>
             </div>
         </section>
@@ -215,17 +176,20 @@
         <div class="inputs">
             
             <div class="group">
+                <label style="color: var(--secondary);">Your Skill Points (SP)</label>
+                <input type="text" id="playerStat" class="stat-input" placeholder="0" autocomplete="off">
+            </div>
+
+            <div class="group">
                 <label>Weapon Type</label>
                 <div class="custom-dropdown" id="weaponTypeDropdown">
                     <div class="selected">Physical</div>
-                    <div class="options-container">
-                        <ul class="options"></ul>
-                    </div>
+                    <div class="options-container"><ul class="options"></ul></div>
                 </div>
             </div>
 
             <div class="group">
-                <label>Select Weapon</label>
+                <label>Weapon</label>
                 <div class="custom-dropdown" id="weaponDropdown">
                     <div class="selected">Punch</div>
                     <div class="options-container">
@@ -258,7 +222,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 
