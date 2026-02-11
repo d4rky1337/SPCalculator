@@ -36,6 +36,8 @@ const bosses = {
     "Minotaur": { health: 30000000000, physical: 0.5, magic: 0.5 },
     "Ashgor": { health: 1600000000000, physical: 0.5, magic: 0.5 },
     "Eyegor": { health: 111000000000000, physical: 0.4, magic: 0.6 },
+    "BloodRoot Witch": { health: 4000000000000000, physical: 0.3, magic: 0.4 },
+    "Queen of Serpents": { health: 12000000000000000, physical: 0.4, magic: 0.5 },
 };
 
 const mobs = {
