@@ -75,23 +75,68 @@ let currentMob = "None";
 
 // --- 3. HELPER FUNCTIONS ---
 
+// Formats big numbers for Display (e.g. 1.2M)
 function formatNumber(num) {
     if (num === Infinity || isNaN(num)) return "0";
     if (num < 1000) return Math.ceil(num).toString();
-    const units = [{v: 1e15, s: 'Q'}, {v: 1e12, s: 'T'}, {v: 1e9, s: 'B'}, {v: 1e6, s: 'M'}, {v: 1e3, s: 'K'}];
+    const units = [
+        {v: 1e18, s: 'Qi'}, 
+        {v: 1e15, s: 'QD'}, 
+        {v: 1e12, s: 'T'}, 
+        {v: 1e9, s: 'B'}, 
+        {v: 1e6, s: 'M'}, 
+        {v: 1e3, s: 'K'}
+    ];
     for (const u of units) {
         if (num >= u.v) return parseFloat((num / u.v).toFixed(2)) + u.s;
     }
     return Math.ceil(num).toString();
 }
 
+// Parses User Input (Handles "10M", "10k", "5.5B")
+function parseAbbreviatedNumber(str) {
+    if (!str) return 0;
+    
+    // Normalize string (lowercase, remove commas)
+    let cleanStr = str.toString().toLowerCase().replace(/,/g, '').trim();
+
+    // Suffix Multipliers
+    const suffixes = {
+        'k': 1e3,
+        'm': 1e6,
+        'b': 1e9,
+        't': 1e12,
+        'q': 1e15,  // Quadrillion
+        'qd': 1e15, // Handling your specific QD
+        'qa': 1e15, // Alternative Quadrillion
+        'qi': 1e18, // Quintillion
+        'sx': 1e21, // Sextillion
+        'sp': 1e24  // Septillion
+    };
+
+    // Regex to separate number from letters
+    // Matches: "10.5" and "m" in "10.5m"
+    const match = cleanStr.match(/^([0-9.]+)([a-z]+)$/);
+
+    if (match) {
+        const numberPart = parseFloat(match[1]);
+        const suffixPart = match[2];
+
+        if (suffixes[suffixPart]) {
+            return numberPart * suffixes[suffixPart];
+        }
+    }
+
+    // Fallback: just return number if no suffix found
+    return parseFloat(cleanStr) || 0;
+}
+
 function calculate() {
     const weaponData = weapons[currentWeaponType][currentWeapon];
     const playerStatInput = document.getElementById('playerStat');
     
-    // Parse user input (remove commas)
-    let userSP = parseFloat(playerStatInput.value.replace(/,/g, ''));
-    if (isNaN(userSP)) userSP = 0;
+    // Use the new parser here
+    let userSP = parseAbbreviatedNumber(playerStatInput.value);
 
     let target = null;
     if (currentBoss !== "None") target = bosses[currentBoss];
@@ -117,9 +162,8 @@ function calculate() {
         myDamage = 0; // Immune
         hitsToKill = "IMMUNE";
     } else {
-        // Damage = SP * Multiplier * (1 - Resistance)
         myDamage = userSP * weaponData.multiplier * (1 - res);
-        myDamage = Math.floor(myDamage); // Usually damage is integer
+        myDamage = Math.floor(myDamage); 
         
         if (myDamage <= 0) {
             hitsToKill = "∞";
@@ -139,15 +183,12 @@ function calculate() {
 
     // --- 3. UPDATE UI ---
     
-    // Your Stats
     document.getElementById('dmgDisplay').textContent = res >= 1 ? "IMMUNE" : formatNumber(myDamage);
     document.getElementById('hitsDisplay').textContent = typeof hitsToKill === 'number' ? formatNumber(hitsToKill) : hitsToKill;
 
-    // Target Stats
     document.getElementById('targetHP').textContent = formatNumber(target.health);
     document.getElementById('targetRes').textContent = (res * 100).toFixed(0) + "%";
 
-    // Required Stats
     const spDisplay = document.getElementById('requiredSP');
     spDisplay.textContent = requiredSP === "IMMUNE" ? "IMMUNE" : formatNumber(requiredSP);
     spDisplay.style.color = requiredSP === "IMMUNE" ? "#ff4444" : "";
@@ -155,17 +196,19 @@ function calculate() {
 
 // --- 4. INPUT HANDLING ---
 
-// Input Event for formatting numbers with commas (e.g. 1,000,000)
-document.getElementById('playerStat').addEventListener('input', function(e) {
-    // Remove non-digits
-    let value = e.target.value.replace(/[^\d]/g, '');
-    if (value) {
-        // Add commas
-        e.target.value = parseInt(value).toLocaleString('en-US');
-    } else {
-        e.target.value = '';
-    }
+const inputField = document.getElementById('playerStat');
+
+// Event: When user types (Calculate immediately, allow letters)
+inputField.addEventListener('input', function(e) {
     calculate();
+});
+
+// Event: When user clicks away or presses enter (Format to full number with commas)
+inputField.addEventListener('change', function(e) {
+    const val = parseAbbreviatedNumber(e.target.value);
+    if(val > 0) {
+        e.target.value = val.toLocaleString('en-US'); // Turns 10m into 10,000,000
+    }
 });
 
 // --- 5. DROPDOWN LOGIC ---
