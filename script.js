@@ -1,21 +1,21 @@
 // --- 1. DATA CONFIGURATION ---
 const weapons = {
   physical: {
-    "Punch": { multiplier: 0.1, attackSpeed: 2.0 },
-    "Longsword": { multiplier: 0.15, attackSpeed: 2.0 },
-    "Claymore": { multiplier: 0.2, attackSpeed: 2.0 },
-    "Royal Sword": { multiplier: 0.25, attackSpeed: 2.0 },
-    "Sandshard": { multiplier: 0.3, attackSpeed: 2.0 },
-    "Inferno Sword": { multiplier: 0.35, attackSpeed: 2.0 },
-    "Dragofeng": { multiplier: 1.2, attackSpeed: 2.0 },
-    "Emberheart Sword": { multiplier: 0.7, attackSpeed: 2.0 },
+    "Punch": { multiplier: 0.1 },
+    "Longsword": { multiplier: 0.15 },
+    "Claymore": { multiplier: 0.2 },
+    "Royal Sword": { multiplier: 0.25 },
+    "Sandshard": { multiplier: 0.3 },
+    "Inferno Sword": { multiplier: 0.35 },
+    "Dragofeng": { multiplier: 1.2 },
+    "Emberheart Sword": { multiplier: 0.7 },
   },
   magic: {
-    "Winterbolt Staff": { multiplier: 0.15, attackSpeed: 1.0 },
-    "Flame Staff": { multiplier: 0.17, attackSpeed: 1.0 },
-    "Lightning Staff": { multiplier: 0.2, attackSpeed: 1.0 },
-    "Aqua Staff": { multiplier: 0.23, attackSpeed: 1.0 },
-    "Inferno Staff": { multiplier: 0.3, attackSpeed: 1.0 },
+    "Winterbolt Staff": { multiplier: 0.15 },
+    "Flame Staff": { multiplier: 0.17 },
+    "Lightning Staff": { multiplier: 0.2 },
+    "Aqua Staff": { multiplier: 0.23 },
+    "Inferno Staff": { multiplier: 0.3 },
   }
 };
 
@@ -75,78 +75,100 @@ let currentMob = "None";
 
 // --- 3. HELPER FUNCTIONS ---
 
-// Formats big numbers (e.g. 1.5B, 100K)
 function formatNumber(num) {
     if (num === Infinity || isNaN(num)) return "0";
     if (num < 1000) return Math.ceil(num).toString();
-
-    const units = [
-        { value: 1e15, suffix: 'Q' },
-        { value: 1e12, suffix: 'T' },
-        { value: 1e9, suffix: 'B' },
-        { value: 1e6, suffix: 'M' },
-        { value: 1e3, suffix: 'K' },
-    ];
-
-    for (const unit of units) {
-        if (num >= unit.value) {
-            let n = num / unit.value;
-            // Show 2 decimals max, remove trailing zeros (e.g., "1.50" -> "1.5")
-            return parseFloat(n.toFixed(2)) + unit.suffix;
-        }
+    const units = [{v: 1e15, s: 'Q'}, {v: 1e12, s: 'T'}, {v: 1e9, s: 'B'}, {v: 1e6, s: 'M'}, {v: 1e3, s: 'K'}];
+    for (const u of units) {
+        if (num >= u.v) return parseFloat((num / u.v).toFixed(2)) + u.s;
     }
     return Math.ceil(num).toString();
 }
 
-// Main Calculation Logic
-function calculateSP() {
+function calculate() {
     const weaponData = weapons[currentWeaponType][currentWeapon];
+    const playerStatInput = document.getElementById('playerStat');
     
-    // Determine target (Boss takes priority if both selected, but logic ensures only one is active)
+    // Parse user input (remove commas)
+    let userSP = parseFloat(playerStatInput.value.replace(/,/g, ''));
+    if (isNaN(userSP)) userSP = 0;
+
     let target = null;
     if (currentBoss !== "None") target = bosses[currentBoss];
     else if (currentMob !== "None") target = mobs[currentMob];
 
     // Reset UI if no target
     if (!target || target.health === 0) {
+        document.getElementById('dmgDisplay').textContent = "0";
+        document.getElementById('hitsDisplay').textContent = "0";
         document.getElementById('requiredSP').textContent = "0";
         document.getElementById('targetHP').textContent = "-";
         document.getElementById('targetRes').textContent = "-";
         return;
     }
 
-    // Get Resistance
-    const resistance = target[currentWeaponType] || 0;
+    const res = target[currentWeaponType] || 0;
 
-    // Display Target Stats
-    document.getElementById('targetHP').textContent = formatNumber(target.health);
-    document.getElementById('targetRes').textContent = (resistance * 100).toFixed(0) + "%";
+    // --- 1. CALCULATE YOUR DAMAGE & HITS ---
+    let myDamage = 0;
+    let hitsToKill = "∞";
 
-    // CALCULATION FORMULA:
-    // Damage = SP * Multiplier * (1 - Resistance)
-    // Therefore: SP = TargetHP / (Multiplier * (1 - Resistance))
-    
-    let requiredSP;
-    if (resistance >= 1) {
-        requiredSP = "IMMUNE"; // Impossible to kill if 100% resistance
+    if (res >= 1) {
+        myDamage = 0; // Immune
+        hitsToKill = "IMMUNE";
     } else {
-        const effectiveMultiplier = weaponData.multiplier * (1 - resistance);
-        requiredSP = target.health / effectiveMultiplier;
+        // Damage = SP * Multiplier * (1 - Resistance)
+        myDamage = userSP * weaponData.multiplier * (1 - res);
+        myDamage = Math.floor(myDamage); // Usually damage is integer
+        
+        if (myDamage <= 0) {
+            hitsToKill = "∞";
+        } else {
+            hitsToKill = Math.ceil(target.health / myDamage);
+        }
     }
 
-    // Update Main Display
+    // --- 2. CALCULATE REQUIRED SP ---
+    let requiredSP;
+    if (res >= 1) {
+        requiredSP = "IMMUNE";
+    } else {
+        const effectiveMult = weaponData.multiplier * (1 - res);
+        requiredSP = target.health / effectiveMult;
+    }
+
+    // --- 3. UPDATE UI ---
+    
+    // Your Stats
+    document.getElementById('dmgDisplay').textContent = res >= 1 ? "IMMUNE" : formatNumber(myDamage);
+    document.getElementById('hitsDisplay').textContent = typeof hitsToKill === 'number' ? formatNumber(hitsToKill) : hitsToKill;
+
+    // Target Stats
+    document.getElementById('targetHP').textContent = formatNumber(target.health);
+    document.getElementById('targetRes').textContent = (res * 100).toFixed(0) + "%";
+
+    // Required Stats
     const spDisplay = document.getElementById('requiredSP');
     spDisplay.textContent = requiredSP === "IMMUNE" ? "IMMUNE" : formatNumber(requiredSP);
-    
-    if(requiredSP === "IMMUNE") {
-        spDisplay.style.color = "#ff4444"; // Red text for immune
-    } else {
-        spDisplay.style.color = ""; // Reset to default accent color
-    }
+    spDisplay.style.color = requiredSP === "IMMUNE" ? "#ff4444" : "";
 }
 
-// --- 4. DROPDOWN LOGIC (With Search) ---
+// --- 4. INPUT HANDLING ---
 
+// Input Event for formatting numbers with commas (e.g. 1,000,000)
+document.getElementById('playerStat').addEventListener('input', function(e) {
+    // Remove non-digits
+    let value = e.target.value.replace(/[^\d]/g, '');
+    if (value) {
+        // Add commas
+        e.target.value = parseInt(value).toLocaleString('en-US');
+    } else {
+        e.target.value = '';
+    }
+    calculate();
+});
+
+// --- 5. DROPDOWN LOGIC ---
 function setupDropdown(id, optionsData, callback) {
     const dropdown = document.getElementById(id);
     const selected = dropdown.querySelector('.selected');
@@ -154,121 +176,77 @@ function setupDropdown(id, optionsData, callback) {
     const optionsList = dropdown.querySelector('.options');
     const searchBar = dropdown.querySelector('.search-bar');
 
-    // Function to populate the list
-    const renderOptions = (filterText = "") => {
-        optionsList.innerHTML = ""; // Clear list
+    const renderOptions = (filter = "") => {
+        optionsList.innerHTML = "";
+        const filtered = optionsData.filter(i => i.toLowerCase().includes(filter.toLowerCase()));
+        if(filtered.length === 0) optionsList.innerHTML = `<li style="color:#666;cursor:default">No results</li>`;
         
-        const filtered = optionsData.filter(item => 
-            item.toLowerCase().includes(filterText.toLowerCase())
-        );
-
-        if (filtered.length === 0) {
-            optionsList.innerHTML = `<li style="color: #666; cursor: default;">No results found</li>`;
-            return;
-        }
-
         filtered.forEach(opt => {
             const li = document.createElement('li');
             li.textContent = opt;
             li.onclick = (e) => {
-                e.stopPropagation(); // Stop bubbling
+                e.stopPropagation();
                 selected.textContent = opt;
-                closeDropdown();
+                container.classList.remove('active');
                 callback(opt);
             };
             optionsList.appendChild(li);
         });
     };
 
-    const openDropdown = () => {
-        // Close all other dropdowns first
-        document.querySelectorAll('.options-container').forEach(el => el.classList.remove('active'));
-        container.classList.add('active');
-        if (searchBar) {
-            searchBar.value = ""; // Reset search
-            searchBar.focus();
-            renderOptions(""); // Reset list to full
-        }
-    };
-
-    const closeDropdown = () => {
-        container.classList.remove('active');
-    };
-
-    // Toggle on click
     selected.onclick = (e) => {
         e.stopPropagation();
-        if (container.classList.contains('active')) {
-            closeDropdown();
-        } else {
-            openDropdown();
+        document.querySelectorAll('.options-container').forEach(el => {
+            if(el !== container) el.classList.remove('active');
+        });
+        container.classList.toggle('active');
+        if(container.classList.contains('active') && searchBar) {
+            searchBar.value = ""; searchBar.focus(); renderOptions("");
         }
     };
 
-    // Prevent closing when clicking inside search bar
-    if (searchBar) {
-        searchBar.onclick = (e) => e.stopPropagation();
-        searchBar.oninput = (e) => renderOptions(e.target.value);
+    if(searchBar) {
+        searchBar.onclick = e => e.stopPropagation();
+        searchBar.oninput = e => renderOptions(e.target.value);
     }
-
-    // Initial Render
     renderOptions();
 }
 
-// --- 5. INITIALIZATION ---
+// --- 6. INITIALIZATION ---
 
-// Weapon Type Dropdown
-setupDropdown('weaponTypeDropdown', ["Physical", "Magic"], (type) => {
-    currentWeaponType = type.toLowerCase();
-    
-    // Update Weapon List based on type
-    const newWeaponList = Object.keys(weapons[currentWeaponType]);
-    currentWeapon = newWeaponList[0];
-    
-    // Re-setup the weapon dropdown with new list
-    setupDropdown('weaponDropdown', newWeaponList, (weapon) => {
-        currentWeapon = weapon;
-        calculateSP();
-    });
-    
-    // Update Weapon UI Text
+setupDropdown('weaponTypeDropdown', ["Physical", "Magic"], (val) => {
+    currentWeaponType = val.toLowerCase();
+    const wList = Object.keys(weapons[currentWeaponType]);
+    currentWeapon = wList[0];
+    setupDropdown('weaponDropdown', wList, (w) => { currentWeapon = w; calculate(); });
     document.querySelector('#weaponDropdown .selected').textContent = currentWeapon;
-    
-    calculateSP();
+    calculate();
 });
 
-// Weapon Selection Dropdown
-setupDropdown('weaponDropdown', Object.keys(weapons.physical), (weapon) => {
-    currentWeapon = weapon;
-    calculateSP();
+setupDropdown('weaponDropdown', Object.keys(weapons.physical), (val) => {
+    currentWeapon = val; calculate();
 });
 
-// Boss Dropdown
-setupDropdown('bossDropdown', Object.keys(bosses), (boss) => {
-    currentBoss = boss;
-    if (boss !== "None") {
-        // If boss selected, reset Mob
-        currentMob = "None";
-        document.querySelector('#mobDropdown .selected').textContent = "None";
+setupDropdown('bossDropdown', Object.keys(bosses), (val) => {
+    currentBoss = val;
+    if(val !== "None") { 
+        currentMob = "None"; 
+        document.querySelector('#mobDropdown .selected').textContent = "None"; 
     }
-    calculateSP();
+    calculate();
 });
 
-// Mob Dropdown
-setupDropdown('mobDropdown', Object.keys(mobs), (mob) => {
-    currentMob = mob;
-    if (mob !== "None") {
-        // If mob selected, reset Boss
-        currentBoss = "None";
-        document.querySelector('#bossDropdown .selected').textContent = "None";
+setupDropdown('mobDropdown', Object.keys(mobs), (val) => {
+    currentMob = val;
+    if(val !== "None") { 
+        currentBoss = "None"; 
+        document.querySelector('#bossDropdown .selected').textContent = "None"; 
     }
-    calculateSP();
+    calculate();
 });
 
-// Close dropdowns when clicking anywhere else on page
 document.addEventListener('click', () => {
     document.querySelectorAll('.options-container').forEach(el => el.classList.remove('active'));
 });
 
-// Run initial calculation
-calculateSP();
+calculate();
