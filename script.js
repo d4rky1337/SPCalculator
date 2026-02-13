@@ -17,7 +17,7 @@ const weapons = {
     "Lightning Staff": { multiplier: 0.2 },
     "Aqua Staff": { multiplier: 0.23 },
     "Inferno Staff": { multiplier: 0.3 },
-    "Nature Staff": { multiplier: 0.4 },
+    "Nature Staff": { multiplier: 0.35 },
     "Elixir Staff": { multiplier: 2.5 },
   }
 };
