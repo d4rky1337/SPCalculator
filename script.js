@@ -7,6 +7,7 @@ const weapons = {
     "Royal Sword": { multiplier: 0.25 },
     "Sandshard": { multiplier: 0.3 },
     "Inferno Sword": { multiplier: 0.35 },
+    "Icebringer Sword": { multiplier: 0.4 },
     "Dragofeng": { multiplier: 1.2 },
     "Emberheart Sword": { multiplier: 0.7 },
   },
@@ -16,6 +17,7 @@ const weapons = {
     "Lightning Staff": { multiplier: 0.2 },
     "Aqua Staff": { multiplier: 0.23 },
     "Inferno Staff": { multiplier: 0.3 },
+    "Nature Staff": { multiplier: 0.4 },
     "Elixir Staff": { multiplier: 2.5 },
   }
 };
