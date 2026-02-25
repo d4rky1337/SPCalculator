@@ -10,7 +10,7 @@
             --bg: #0b0e14;
             --card: #161b22;
             --input-bg: #0d1117;
-            --accent: #00f2ff;
+            --accent: #0094d9;
             --accent-glow: rgba(0, 242, 255, 0.3);
             --secondary: #ffd700; /* Gold for hits/damage */
             --text-main: #ffffff;
@@ -31,7 +31,36 @@
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
+            position: relative; /* Helps anchor absolute/fixed elements */
+            overflow-x: hidden; /* Prevents horizontal scrollbar if images are too wide */
         }
+
+        /* --- NEW SIDE IMAGES CSS --- */
+        .side-image {
+            position: fixed;      /* Stays in place when scrolling */
+            top: 50%;             /* Centers vertically */
+            transform: translateY(-50%);
+            opacity: 0.15;        /* Makes it transparent (change 0.15 to whatever looks good) */
+            z-index: -1;          /* Pushes it behind the calculator */
+            max-height: 20vh;     /* Limits the height so it doesn't take over the screen */
+            pointer-events: none; /* Makes sure you can't accidentally click or drag the image */
+        }
+
+        .side-image.left {
+            left: 5%;             /* Distance from the left edge */
+        }
+
+        .side-image.right {
+            right: 5%;            /* Distance from the right edge */
+        }
+
+        /* On smaller screens (phones), hide the side images to keep it clean */
+        @media (max-width: 900px) {
+            .side-image {
+                display: none;
+            }
+        }
+        /* --------------------------- */
 
         .calculator-card {
             background: var(--card);
@@ -45,8 +74,16 @@
             flex-direction: column;
         }
 
-        header { text-align: center; margin-bottom: 2rem; }
-        header h1 { margin: 0; font-size: 1.8rem; letter-spacing: 3px; font-weight: 800; }
+        /* --- NEW HEADER ICON STYLES --- */
+        .header-icon {
+            width: 160px; /* Adjust this value to make the icon bigger or smaller */
+            height: auto;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 15px var(--accent-glow)); /* Adds a cool matching glow */
+        }
+
+        header { text-align: center; margin-bottom: 1rem; }
+        header h1 { margin: 0; font-size: 1.2rem; letter-spacing: 3px; font-weight: 800; }
         header p { color: var(--text-dim); font-size: 0.9rem; margin-top: 5px; }
         .accent { color: var(--accent); text-shadow: 0 0 15px var(--accent-glow); }
 
@@ -137,7 +174,7 @@
         .separator::before, .separator::after { content: ''; flex: 1; border-bottom: 1px solid var(--border); }
         .separator::before { margin-right: 1em; } .separator::after { margin-left: 1em; }
 
-        /* --- NEW SUPPORT BUTTON STYLES --- */
+        /* Support Button Styles */
         .support-container {
             margin-top: 2rem;
             text-align: center;
@@ -153,7 +190,7 @@
             text-decoration: none;
             padding: 12px 24px;
             border: 1px solid var(--border);
-            border-radius: 50px; /* Pill shape */
+            border-radius: 50px;
             font-weight: 600;
             font-size: 0.85rem;
             text-transform: uppercase;
@@ -186,8 +223,12 @@
 </head>
 <body>
 
+    <img src="icon.png" alt="Decoration Left" class="side-image left">
+    <img src="icon.png" alt="Decoration Right" class="side-image right">
+
     <div class="calculator-card">
         <header>
+            <img src="icon.png" alt="App Icon" class="header-icon">
             <h1>SP <span class="accent">CALCULATOR</span></h1>
             <p>Calculate Damage & Requirements</p>
         </header>
