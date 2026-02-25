@@ -7,7 +7,6 @@ const weapons = {
     "Royal Sword": { multiplier: 0.25 },
     "Sandshard": { multiplier: 0.3 },
     "Inferno Sword": { multiplier: 0.35 },
-    "Icebringer Sword": { multiplier: 0.4 },
     "Dragofeng": { multiplier: 1.2 },
     "Emberheart Sword": { multiplier: 0.7 },
   },
@@ -17,8 +16,6 @@ const weapons = {
     "Lightning Staff": { multiplier: 0.2 },
     "Aqua Staff": { multiplier: 0.23 },
     "Inferno Staff": { multiplier: 0.3 },
-    "Nature Staff": { multiplier: 0.35 },
-    "Elixir Staff": { multiplier: 2.5 },
   }
 };
 
@@ -147,9 +144,9 @@ function calculate() {
 
     // Reset UI if no target
     if (!target || target.health === 0) {
-        document.getElementById('dmgDisplay').textContent = "0";
-        document.getElementById('hitsDisplay').textContent = "0";
-        document.getElementById('requiredSP').textContent = "0";
+        document.getElementById('dmgDisplay').textContent = "-";
+        document.getElementById('hitsDisplay').textContent = "-";
+        document.getElementById('requiredSP').textContent = "-";
         document.getElementById('targetHP').textContent = "-";
         document.getElementById('targetRes').textContent = "-";
         return;
