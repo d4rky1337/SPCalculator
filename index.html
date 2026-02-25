@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SP LEGENDS Calculator</title>
+    <title>Ultimate SP Calculator</title>
     <link rel="icon" type="image/png" href="icon.png">
     <style>
         :root {
@@ -131,6 +131,11 @@
             transition: 0.2s;
         }
         .stat-input:focus { border-color: var(--secondary); }
+		.stat-input::placeholder {
+    font-size: 0.85rem; /* Makes the placeholder smaller */
+    font-weight: normal; /* Makes it look lighter than the typed numbers */
+    color: #484f58; /* Keeps it dim */
+}
 
         /* Dropdown Styling */
         .custom-dropdown {
@@ -268,7 +273,7 @@
             
             <div class="group">
                 <label style="color: var(--secondary);">Your Skill Points (SP)</label>
-                <input type="text" id="playerStat" class="stat-input" placeholder="0" autocomplete="off">
+                <input type="text" id="playerStat" class="stat-input" placeholder="Add your current SP (ex 1M and press enter)" autocomplete="off">
             </div>
 
             <div class="group">
