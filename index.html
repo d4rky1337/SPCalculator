@@ -26,7 +26,7 @@
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             display: flex;
             justify-content: center;
-            align-items: center; /* Center horizontally and vertically */
+            align-items: center; 
             min-height: 100vh;
             margin: 0;
             padding: 40px 20px;
@@ -59,7 +59,7 @@
             align-items: flex-start;
             justify-content: center;
             width: 100%;
-            max-width: 1200px;
+            max-width: 1300px;
             z-index: 1;
         }
 
@@ -69,9 +69,13 @@
                 flex-direction: column;
                 align-items: center;
             }
+            /* MOBILE LAYOUT ORDERING */
+            .dashboard-container > div:nth-child(1) { order: 2; } /* Left Panel (Stats) -> Second */
+            .dashboard-container > div:nth-child(2) { order: 1; } /* Center Panel (Main) -> First */
+            .dashboard-container > div:nth-child(3) { order: 3; } /* Right Panel (Advanced) -> Last */
         }
 
-        /* Panel Styling (Used for Left and Right panels) */
+        /* Panel Styling */
         .side-panel {
             background: var(--card);
             width: 100%;
@@ -85,11 +89,11 @@
             gap: 1.5rem;
         }
 
-        /* Center Panel (Main Inputs) */
+        /* Center Panel (Main Inputs) - WIDER NOW */
         .center-panel {
             background: var(--card);
             width: 100%;
-            max-width: 440px;
+            max-width: 520px; /* Increased from 440px */
             padding: 2.5rem;
             border-radius: 20px;
             border: 1px solid var(--border);
@@ -132,7 +136,7 @@
         .gold-value { color: var(--secondary); text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
 
         .row-split { display: flex; justify-content: space-between; gap: 10px; }
-        .row-split > div { flex: 1; }
+        .row-split > div { flex: 1; padding: 0.8rem; }
 
         /* Inputs */
         .group { margin-bottom: 1.2rem; position: relative; }
@@ -182,13 +186,9 @@
         }
         .adv-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .adv-row label { margin-bottom: 0; font-size: 0.75rem; color: var(--text-dim); }
-        .adv-input-small {
-            background: var(--input-bg); border: 1px solid var(--border); color: var(--accent);
-            padding: 8px 10px; border-radius: 6px; width: 80px; text-align: right; font-weight: bold; outline: none;
-        }
         .adv-text { font-size: 0.85rem; color: var(--text-dim); line-height: 1.5; margin: 0; }
 
-        /* --- UPDATED SUPPORT BUTTON STYLES --- */
+        /* Support Button */
         .support-container { margin-top: 1.5rem; text-align: center; }
         .support-btn {
             display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: transparent;
@@ -228,11 +228,11 @@
             </div>
 
             <div class="row-split">
-                <div class="info-box" style="padding: 1rem;">
+                <div class="info-box">
                     <span class="label">Target HP</span>
                     <div id="targetHP" style="font-size: 1.2rem; font-weight: bold;">-</div>
                 </div>
-                <div class="info-box" style="padding: 1rem;">
+                <div class="info-box">
                     <span class="label">Resist</span>
                     <div id="targetRes" style="font-size: 1.2rem; font-weight: bold;">-</div>
                 </div>
@@ -320,10 +320,16 @@
             </div>
 
             <div id="farmTracker" style="display: none;">
-                <div class="adv-title" style="font-size: 0.75rem;">Mob Farm Tracker</div>
-                <div class="info-box" style="margin-bottom: 15px; padding: 1rem;">
-                    <span class="label">Time to Next SP Goal</span>
-                    <div id="farmTimeNeeded" class="value" style="color: var(--accent); font-size: 1.8rem;">0</div>
+                <div class="adv-title" style="font-size: 0.75rem;">Time to Next SP Goal</div>
+                <div class="row-split" style="margin-bottom: 15px;">
+                    <div class="info-box">
+                        <span class="label">1x SP</span>
+                        <div id="farmTime1x" class="value" style="color: var(--accent); font-size: 1.3rem;">0</div>
+                    </div>
+                    <div class="info-box">
+                        <span class="label">2x SP</span>
+                        <div id="farmTime2x" class="value" style="color: var(--secondary); font-size: 1.3rem;">0</div>
+                    </div>
                 </div>
             </div>
 
@@ -337,8 +343,13 @@
             <div class="info-box" style="text-align: left; padding: 1.2rem;">
                 <span class="label" style="text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 10px;">Tips</span>
                 <p class="adv-text">
-                    • <strong>Pro Tip:</strong> Click Enter after typing your SP. (1T,1B etc)<br><br>
-                    • Selecting a Mob calculates how long until you reach the next SP milestone.(You need to 1shot it)
+                    <strong>Pro Tip:</strong> Click Enter after typing your SP. (1T, 1B etc)<br>
+					<strong>How to calculate time needed to farm</strong><br>
+                    • Selecting a Mob calculates how long until you reach the next SP milestone.(You need to 1shot it)<br>
+					• It will calculate based on the weapon you are using and current SP.<br>
+					<strong>Sword or staff?</strong><br>
+					• Most of the mobs have a lower physical armour which would require less SP in attack.<br>
+					• The advantage of the staff is faster SP gain through farming, easier boss fights and not having to worry about HP and REGEN.
                 </p>
             </div>
         </div>
