@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SP LEGENDS Calculator</title>
     <link rel="icon" type="image/png" href="icon.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+
     <style>
         :root {
             --bg: #0b0e14;
@@ -23,7 +28,8 @@
         body {
             background-color: var(--bg);
             color: var(--text-main);
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            /* ADDED: Use the new Outfit font */
+            font-family: 'Outfit', 'Segoe UI', Roboto, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center; 
@@ -34,6 +40,12 @@
             position: relative; 
             overflow-x: hidden; 
         }
+
+        /* --- ADDED: Custom Dark Scrollbar --- */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--input-bg); border-radius: 8px; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 8px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
 
         /* --- BACKGROUND IMAGES --- */
         .side-image {
@@ -89,17 +101,24 @@
             gap: 1.5rem;
         }
 
-        /* Center Panel (Main Inputs) - WIDER NOW */
+        /* Center Panel (Main Inputs) */
         .center-panel {
             background: var(--card);
             width: 100%;
-            max-width: 520px; /* Increased from 440px */
+            max-width: 520px; 
             padding: 2.5rem;
             border-radius: 20px;
             border: 1px solid var(--border);
             box-shadow: 0 20px 50px rgba(0,0,0,0.6);
             display: flex;
             flex-direction: column;
+        }
+
+        /* --- ADDED: Mobile specific spacing adjustments --- */
+        @media (max-width: 600px) {
+            .center-panel { padding: 1.5rem; }
+            .side-panel { padding: 1.2rem; gap: 1rem; }
+            .big-value { font-size: 1.8rem !important; } 
         }
 
         .header-icon {
@@ -132,7 +151,18 @@
         .info-box .label { display: block; font-size: 0.75rem; text-transform: uppercase; color: var(--text-dim); margin-bottom: 8px;}
         .info-box .value { font-size: 1.6rem; font-weight: 800; color: #fff; }
         
-        .big-value { font-size: 2.2rem !important; color: var(--accent); text-shadow: 0 0 10px var(--accent-glow); }
+        /* --- ADDED: Pulse Animation --- */
+        @keyframes pulseGlow {
+            0% { text-shadow: 0 0 10px var(--accent-glow); }
+            50% { text-shadow: 0 0 25px var(--accent); }
+            100% { text-shadow: 0 0 10px var(--accent-glow); }
+        }
+        .big-value { 
+            font-size: 2.2rem !important; 
+            color: var(--accent); 
+            animation: pulseGlow 3s infinite; /* Applies the glow */
+        }
+        
         .gold-value { color: var(--secondary); text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
 
         .row-split { display: flex; justify-content: space-between; gap: 10px; }
@@ -212,28 +242,28 @@
             <h2 class="adv-title" style="margin-bottom: 0; text-align: center;">Combat Stats</h2>
             
             <div class="info-box highlight">
-                <span class="label">SP For One-Shot</span>
+                <span class="label">🎯 SP For One-Shot</span>
                 <div id="requiredSP" class="value big-value">0</div>
             </div>
 
             <div class="row-split">
                 <div class="info-box">
-                    <span class="label">Your Damage</span>
+                    <span class="label">⚔️ Your Damage</span>
                     <div id="dmgDisplay" class="value gold-value">0</div>
                 </div>
                 <div class="info-box">
-                    <span class="label">Hits to Kill</span>
+                    <span class="label">🩸 Hits to Kill</span>
                     <div id="hitsDisplay" class="value gold-value">0</div>
                 </div>
             </div>
 
             <div class="row-split">
                 <div class="info-box">
-                    <span class="label">Target HP</span>
+                    <span class="label">❤️ Target HP</span>
                     <div id="targetHP" style="font-size: 1.2rem; font-weight: bold;">-</div>
                 </div>
                 <div class="info-box">
-                    <span class="label">Resist</span>
+                    <span class="label">🛡️ Resist</span>
                     <div id="targetRes" style="font-size: 1.2rem; font-weight: bold;">-</div>
                 </div>
             </div>
@@ -249,7 +279,7 @@
             <div class="inputs">
                 <div class="group">
                     <label style="color: var(--secondary);">Your Skill Points (SP)</label>
-                    <input type="text" id="playerStat" class="stat-input" placeholder="Add your current SP (ex 1M)" autocomplete="off">
+                    <input type="text" id="playerStat" class="stat-input" placeholder="Enter SP (e.g. 1.5M, 10B)" autocomplete="off">
                 </div>
 
                 <div class="group">
@@ -314,13 +344,13 @@
                     <div id="bossDropPercentDisplay" style="color: var(--accent); font-weight: bold; font-size: 0.9rem;">10%</div>
                 </div>
                 <div class="info-box" style="margin-top: 10px; padding: 1rem;">
-                    <span class="label">Total DMG Needed</span>
+                    <span class="label">💀 Total DMG Needed</span>
                     <div id="bossDamageNeeded" class="value" style="color: var(--accent); font-size: 1.3rem;">0</div>
                 </div>
             </div>
 
             <div id="farmTracker" style="display: none;">
-                <div class="adv-title" style="font-size: 0.75rem;">Time to Next SP Goal</div>
+                <div class="adv-title" style="font-size: 0.75rem;">⏱️ Time to Next SP Goal</div>
                 <div class="row-split" style="margin-bottom: 15px;">
                     <div class="info-box">
                         <span class="label">1x SP</span>
@@ -344,12 +374,12 @@
                 <span class="label" style="text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 10px;">Tips</span>
                 <p class="adv-text">
                     <strong>Pro Tip:</strong> Click Enter after typing your SP. (1T, 1B etc)<br>
-					<strong>How to calculate time needed to farm</strong><br>
+                    <strong>How to calculate time needed to farm</strong><br>
                     • Selecting a Mob calculates how long until you reach the next SP milestone.(You need to 1shot it)<br>
-					• It will calculate based on the weapon you are using and current SP.<br>
-					<strong>Sword or staff?</strong><br>
-					• Most of the mobs have a lower physical armour which would require less SP in attack.<br>
-					• The advantage of the staff is faster SP gain through farming, easier boss fights and not having to worry about HP and REGEN.
+                    • It will calculate based on the weapon you are using and current SP.<br>
+                    <strong>Sword or staff?</strong><br>
+                    • Most of the mobs have a lower physical armour which would require less SP in attack.<br>
+                    • The advantage of the staff is faster SP gain through farming, easier boss fights and not having to worry about HP and REGEN.
                 </p>
             </div>
         </div>
