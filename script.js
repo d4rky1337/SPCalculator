@@ -1,3 +1,4 @@
+// --- 1. DATA CONFIGURATION ---
 const weapons = {
   physical: {
     "Punch": { multiplier: 0.1 },
@@ -166,7 +167,8 @@ function calculate() {
 
     const bossTracker = document.getElementById('bossTracker');
     const farmTracker = document.getElementById('farmTracker');
-    const farmTimeNeeded = document.getElementById('farmTimeNeeded');
+    const farmTime1x = document.getElementById('farmTime1x');
+    const farmTime2x = document.getElementById('farmTime2x');
     const bossDropPercentDisplay = document.getElementById('bossDropPercentDisplay');
 
     if (currentBoss !== "None") {
@@ -186,8 +188,9 @@ function calculate() {
         bossTracker.style.display = 'none';
         farmTracker.style.display = 'block';
         
-        if (farmTimeNeeded) {
-            farmTimeNeeded.style.fontSize = "1.8rem"; 
+        if (farmTime1x && farmTime2x) {
+            farmTime1x.style.fontSize = "1.3rem"; 
+            farmTime2x.style.fontSize = "1.3rem"; 
             
             const mobKeys = Object.keys(mobs);
             const currentIndex = mobKeys.indexOf(currentMob);
@@ -206,22 +209,33 @@ function calculate() {
                 }
 
                 if (isImmune) {
-                    farmTimeNeeded.textContent = "NEXT IMMUNE";
-                    farmTimeNeeded.style.fontSize = "1.2rem";
+                    farmTime1x.textContent = "IMMUNE";
+                    farmTime2x.textContent = "IMMUNE";
+                    farmTime1x.style.fontSize = "1rem";
+                    farmTime2x.style.fontSize = "1rem";
                 } else {
-                    let gainPerMin = target.spPerMin ? (target.spPerMin[currentWeaponType] || 0) : 0;
+                    // Your entered SP gain acts as the 2x SP rate
+                    let gainPerMin2x = target.spPerMin ? (target.spPerMin[currentWeaponType] || 0) : 0;
+                    // Normal players get exactly half
+                    let gainPerMin1x = gainPerMin2x / 2;
 
                     if (nextRequiredSP > userSP) {
                         let deficit = nextRequiredSP - userSP;
-                        let reqMins = gainPerMin > 0 ? Math.ceil(deficit / gainPerMin) : "∞";
-                        farmTimeNeeded.textContent = reqMins === "∞" ? "∞" : formatTime(reqMins);
+                        let reqMins2x = gainPerMin2x > 0 ? Math.ceil(deficit / gainPerMin2x) : "∞";
+                        let reqMins1x = gainPerMin1x > 0 ? Math.ceil(deficit / gainPerMin1x) : "∞";
+                        
+                        farmTime1x.textContent = reqMins1x === "∞" ? "∞" : formatTime(reqMins1x);
+                        farmTime2x.textContent = reqMins2x === "∞" ? "∞" : formatTime(reqMins2x);
                     } else {
-                        farmTimeNeeded.textContent = "READY!";
+                        farmTime1x.textContent = "READY!";
+                        farmTime2x.textContent = "READY!";
                     }
                 }
             } else {
-                farmTimeNeeded.textContent = "MAX MOB!";
-                farmTimeNeeded.style.fontSize = "1.4rem";
+                farmTime1x.textContent = "MAX!";
+                farmTime2x.textContent = "MAX!";
+                farmTime1x.style.fontSize = "1.1rem";
+                farmTime2x.style.fontSize = "1.1rem";
             }
         }
     }
