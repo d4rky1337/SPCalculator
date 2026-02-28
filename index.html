@@ -11,8 +11,8 @@
             --card: #161b22;
             --input-bg: #0d1117;
             --accent: #0094d9;
-            --accent-glow: rgba(0, 242, 255, 0.3);
-            --secondary: #ffd700; /* Gold for hits/damage */
+            --accent-glow: rgba(0, 148, 217, 0.4);
+            --secondary: #ffd700; 
             --text-main: #ffffff;
             --text-dim: #8b949e;
             --border: #30363d;
@@ -26,46 +26,70 @@
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: center; /* Center horizontally and vertically */
             min-height: 100vh;
             margin: 0;
-            padding: 20px;
+            padding: 40px 20px;
             box-sizing: border-box;
-            position: relative; /* Helps anchor absolute/fixed elements */
-            overflow-x: hidden; /* Prevents horizontal scrollbar if images are too wide */
+            position: relative; 
+            overflow-x: hidden; 
         }
 
-        /* --- NEW SIDE IMAGES CSS --- */
+        /* --- BACKGROUND IMAGES --- */
         .side-image {
-            position: fixed;      /* Stays in place when scrolling */
-            top: 50%;             /* Centers vertically */
+            position: fixed;      
+            top: 50%;             
             transform: translateY(-50%);
-            opacity: 0.15;        /* Makes it transparent (change 0.15 to whatever looks good) */
-            z-index: -1;          /* Pushes it behind the calculator */
-            max-height: 20vh;     /* Limits the height so it doesn't take over the screen */
-            pointer-events: none; /* Makes sure you can't accidentally click or drag the image */
+            opacity: 0.15;        
+            z-index: -1;          
+            max-height: 20vh;     
+            pointer-events: none; 
+        }
+        .side-image.left { left: 5%; }
+        .side-image.right { right: 5%; }
+
+        @media (max-width: 1200px) {
+            .side-image { display: none; }
         }
 
-        .side-image.left {
-            left: 5%;             /* Distance from the left edge */
+        /* --- 3-COLUMN DASHBOARD LAYOUT --- */
+        .dashboard-container {
+            display: flex;
+            gap: 25px;
+            align-items: flex-start;
+            justify-content: center;
+            width: 100%;
+            max-width: 1200px;
+            z-index: 1;
         }
 
-        .side-image.right {
-            right: 5%;            /* Distance from the right edge */
-        }
-
-        /* On smaller screens (phones), hide the side images to keep it clean */
-        @media (max-width: 900px) {
-            .side-image {
-                display: none;
+        /* Responsive Stacking for smaller screens */
+        @media (max-width: 1000px) {
+            .dashboard-container {
+                flex-direction: column;
+                align-items: center;
             }
         }
-        /* --------------------------- */
 
-        .calculator-card {
+        /* Panel Styling (Used for Left and Right panels) */
+        .side-panel {
             background: var(--card);
             width: 100%;
-            max-width: 480px;
+            max-width: 320px;
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Center Panel (Main Inputs) */
+        .center-panel {
+            background: var(--card);
+            width: 100%;
+            max-width: 440px;
             padding: 2.5rem;
             border-radius: 20px;
             border: 1px solid var(--border);
@@ -74,98 +98,70 @@
             flex-direction: column;
         }
 
-        /* --- NEW HEADER ICON STYLES --- */
         .header-icon {
-            width: 160px; /* Adjust this value to make the icon bigger or smaller */
+            width: 160px; 
             height: auto;
             margin-bottom: 15px;
-            filter: drop-shadow(0 0 15px var(--accent-glow)); /* Adds a cool matching glow */
+            filter: drop-shadow(0 0 15px var(--accent-glow)); 
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        header { text-align: center; margin-bottom: 1rem; }
+        header { text-align: center; margin-bottom: 2rem; }
         header h1 { margin: 0; font-size: 1.2rem; letter-spacing: 3px; font-weight: 800; }
         header p { color: var(--text-dim); font-size: 0.9rem; margin-top: 5px; }
         .accent { color: var(--accent); text-shadow: 0 0 15px var(--accent-glow); }
 
-        /* Result Section */
-        .result-display {
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
+        /* Custom Box styling inside Panels */
+        .info-box {
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 12px;
+            padding: 1.2rem;
             border: 1px solid var(--border);
+            text-align: center;
         }
-
-        .result-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--border);
+        .info-box.highlight {
+            border-color: rgba(0, 148, 217, 0.4);
+            box-shadow: 0 0 15px rgba(0, 148, 217, 0.1) inset;
         }
-        .result-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-
-        .res-box { text-align: center; flex: 1; }
-        .res-box .label { display: block; font-size: 0.7rem; text-transform: uppercase; color: var(--text-dim); margin-bottom: 5px;}
-        .res-box .value { font-size: 1.4rem; font-weight: 800; color: #fff; }
+        .info-box .label { display: block; font-size: 0.75rem; text-transform: uppercase; color: var(--text-dim); margin-bottom: 8px;}
+        .info-box .value { font-size: 1.6rem; font-weight: 800; color: #fff; }
         
-        .big-value { font-size: 2rem; color: var(--accent); text-shadow: 0 0 10px var(--accent-glow); }
+        .big-value { font-size: 2.2rem !important; color: var(--accent); text-shadow: 0 0 10px var(--accent-glow); }
         .gold-value { color: var(--secondary); text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+
+        .row-split { display: flex; justify-content: space-between; gap: 10px; }
+        .row-split > div { flex: 1; }
 
         /* Inputs */
         .group { margin-bottom: 1.2rem; position: relative; }
         label { display: block; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.5rem; text-transform: uppercase; font-weight: 600; }
 
-        /* Text Input styling */
         .stat-input {
-            width: 100%;
-            background: var(--input-bg);
-            border: 1px solid var(--border);
-            color: var(--secondary);
-            font-size: 1.1rem;
-            padding: 12px 16px;
-            border-radius: 8px;
-            outline: none;
-            box-sizing: border-box;
-            font-weight: bold;
-            transition: 0.2s;
+            width: 100%; background: var(--input-bg); border: 1px solid var(--border);
+            color: var(--secondary); font-size: 1.1rem; padding: 12px 16px;
+            border-radius: 8px; outline: none; box-sizing: border-box;
+            font-weight: bold; transition: 0.2s;
         }
         .stat-input:focus { border-color: var(--secondary); }
-		.stat-input::placeholder {
-    font-size: 0.85rem; /* Makes the placeholder smaller */
-    font-weight: normal; /* Makes it look lighter than the typed numbers */
-    color: #484f58; /* Keeps it dim */
-}
+        .stat-input::placeholder { font-size: 0.85rem; font-weight: normal; color: #484f58; }
 
-        /* Dropdown Styling */
+        /* Dropdowns */
         .custom-dropdown {
-            background: var(--input-bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            cursor: pointer;
-            position: relative;
+            background: var(--input-bg); border: 1px solid var(--border);
+            border-radius: 8px; cursor: pointer; position: relative;
         }
         .selected { padding: 12px 16px; font-size: 0.95rem; user-select: none; }
-        
         .options-container {
-            position: absolute;
-            top: 105%; left: 0; width: 100%;
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            z-index: 100;
-            display: none;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            overflow: hidden;
+            position: absolute; top: 105%; left: 0; width: 100%; background: var(--card);
+            border: 1px solid var(--border); border-radius: 8px; z-index: 100;
+            display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.8); overflow: hidden;
         }
         .options-container.active { display: block; }
-        
         .search-bar {
-            width: 100%; padding: 12px 16px;
-            background: #090c10; border: none;
-            border-bottom: 1px solid var(--border);
-            color: var(--text-main); outline: none;
-            box-sizing: border-box;
+            width: 100%; padding: 12px 16px; background: #090c10; border: none;
+            border-bottom: 1px solid var(--border); color: var(--text-main); outline: none; box-sizing: border-box;
         }
         .options { list-style: none; padding: 0; margin: 0; max-height: 200px; overflow-y: auto; }
         .options li { padding: 10px 16px; font-size: 0.9rem; }
@@ -179,50 +175,29 @@
         .separator::before, .separator::after { content: ''; flex: 1; border-bottom: 1px solid var(--border); }
         .separator::before { margin-right: 1em; } .separator::after { margin-left: 1em; }
 
-        /* Support Button Styles */
-        .support-container {
-            margin-top: 2rem;
-            text-align: center;
+        /* Advanced Panel Details */
+        .adv-title {
+            color: var(--text-main); font-size: 0.9rem; text-transform: uppercase;
+            font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 8px;
         }
+        .adv-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .adv-row label { margin-bottom: 0; font-size: 0.75rem; color: var(--text-dim); }
+        .adv-input-small {
+            background: var(--input-bg); border: 1px solid var(--border); color: var(--accent);
+            padding: 8px 10px; border-radius: 6px; width: 80px; text-align: right; font-weight: bold; outline: none;
+        }
+        .adv-text { font-size: 0.85rem; color: var(--text-dim); line-height: 1.5; margin: 0; }
 
+        /* --- UPDATED SUPPORT BUTTON STYLES --- */
+        .support-container { margin-top: 1.5rem; text-align: center; }
         .support-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            background: transparent;
-            color: var(--text-dim);
-            text-decoration: none;
-            padding: 12px 24px;
-            border: 1px solid var(--border);
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-            width: 100%;
-            box-sizing: border-box;
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: transparent;
+            color: #586069; text-decoration: none; padding: 8px; border: none;
+            font-size: 0.75rem; transition: all 0.3s ease; opacity: 0.7;
         }
-
-        .support-btn svg {
-            width: 18px;
-            height: 18px;
-            fill: var(--text-dim);
-            transition: fill 0.3s ease;
-        }
-
-        .support-btn:hover {
-            border-color: var(--heart);
-            color: white;
-            box-shadow: 0 0 15px rgba(255, 0, 85, 0.2);
-            background: rgba(255, 0, 85, 0.05);
-            transform: translateY(-2px);
-        }
-
-        .support-btn:hover svg {
-            fill: var(--heart);
-        }
+        .support-btn svg { width: 14px; height: 14px; fill: #586069; transition: fill 0.3s ease; }
+        .support-btn:hover { opacity: 1; color: var(--text-main); }
+        .support-btn:hover svg { fill: var(--heart); }
 
     </style>
 </head>
@@ -231,106 +206,145 @@
     <img src="icon.png" alt="Decoration Left" class="side-image left">
     <img src="icon.png" alt="Decoration Right" class="side-image right">
 
-    <div class="calculator-card">
-        <header>
-            <img src="icon.png" alt="App Icon" class="header-icon">
-            <h1>SP <span class="accent">CALCULATOR</span></h1>
-            <p>Calculate Damage & Requirements</p>
-        </header>
+    <div class="dashboard-container">
+        
+        <div class="side-panel">
+            <h2 class="adv-title" style="margin-bottom: 0; text-align: center;">Combat Stats</h2>
+            
+            <div class="info-box highlight">
+                <span class="label">SP For One-Shot</span>
+                <div id="requiredSP" class="value big-value">0</div>
+            </div>
 
-        <section class="result-display">
-            <div class="result-row">
-                <div class="res-box">
+            <div class="row-split">
+                <div class="info-box">
                     <span class="label">Your Damage</span>
                     <div id="dmgDisplay" class="value gold-value">0</div>
                 </div>
-                <div class="res-box">
+                <div class="info-box">
                     <span class="label">Hits to Kill</span>
                     <div id="hitsDisplay" class="value gold-value">0</div>
                 </div>
             </div>
 
-            <div class="result-row">
-                <div class="res-box">
-                    <span class="label">SP For One-Shot</span>
-                    <div id="requiredSP" class="value big-value">0</div>
-                </div>
-            </div>
-
-            <div class="result-row" style="margin-bottom:0; border:none;">
-                <div class="res-box">
+            <div class="row-split">
+                <div class="info-box" style="padding: 1rem;">
                     <span class="label">Target HP</span>
-                    <div id="targetHP">-</div>
+                    <div id="targetHP" style="font-size: 1.2rem; font-weight: bold;">-</div>
                 </div>
-                <div class="res-box">
+                <div class="info-box" style="padding: 1rem;">
                     <span class="label">Resist</span>
-                    <div id="targetRes">-</div>
-                </div>
-            </div>
-        </section>
-
-        <div class="inputs">
-            
-            <div class="group">
-                <label style="color: var(--secondary);">Your Skill Points (SP)</label>
-                <input type="text" id="playerStat" class="stat-input" placeholder="Add your current SP (ex 1M and press enter)" autocomplete="off">
-            </div>
-
-            <div class="group">
-                <label>Weapon Type</label>
-                <div class="custom-dropdown" id="weaponTypeDropdown">
-                    <div class="selected">Physical</div>
-                    <div class="options-container"><ul class="options"></ul></div>
-                </div>
-            </div>
-
-            <div class="group">
-                <label>Weapon</label>
-                <div class="custom-dropdown" id="weaponDropdown">
-                    <div class="selected">Punch</div>
-                    <div class="options-container">
-                        <input type="text" class="search-bar" placeholder="Find weapon...">
-                        <ul class="options"></ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="separator">Select Target</div>
-
-            <div class="group">
-                <label>Boss</label>
-                <div class="custom-dropdown" id="bossDropdown">
-                    <div class="selected">None</div>
-                    <div class="options-container">
-                        <input type="text" class="search-bar" placeholder="Find boss...">
-                        <ul class="options"></ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="group">
-                <label>NPC / Mob</label>
-                <div class="custom-dropdown" id="mobDropdown">
-                    <div class="selected">None</div>
-                    <div class="options-container">
-                        <input type="text" class="search-bar" placeholder="Find mob...">
-                        <ul class="options"></ul>
-                    </div>
+                    <div id="targetRes" style="font-size: 1.2rem; font-weight: bold;">-</div>
                 </div>
             </div>
         </div>
 
-        <div class="support-container">
-            <a href="https://www.roblox.com/users/53895278/inventory#!/game-passes" target="_blank" class="support-btn">
-                <svg viewBox="0 0 24 24">
-                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                </svg>
-                Support This Creator
-            </a>
+        <div class="center-panel">
+            <header>
+                <img src="icon.png" alt="App Icon" class="header-icon">
+                <h1>SP <span class="accent">CALCULATOR</span></h1>
+                <p>Calculate Damage & Requirements</p>
+            </header>
+
+            <div class="inputs">
+                <div class="group">
+                    <label style="color: var(--secondary);">Your Skill Points (SP)</label>
+                    <input type="text" id="playerStat" class="stat-input" placeholder="Add your current SP (ex 1M)" autocomplete="off">
+                </div>
+
+                <div class="group">
+                    <label>Weapon Type</label>
+                    <div class="custom-dropdown" id="weaponTypeDropdown">
+                        <div class="selected">Physical</div>
+                        <div class="options-container"><ul class="options"></ul></div>
+                    </div>
+                </div>
+
+                <div class="group">
+                    <label>Weapon</label>
+                    <div class="custom-dropdown" id="weaponDropdown">
+                        <div class="selected">Punch</div>
+                        <div class="options-container">
+                            <input type="text" class="search-bar" placeholder="Find weapon...">
+                            <ul class="options"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="separator">Select Target</div>
+
+                <div class="group">
+                    <label>Boss</label>
+                    <div class="custom-dropdown" id="bossDropdown">
+                        <div class="selected">None</div>
+                        <div class="options-container">
+                            <input type="text" class="search-bar" placeholder="Find boss...">
+                            <ul class="options"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="group">
+                    <label>NPC / Mob</label>
+                    <div class="custom-dropdown" id="mobDropdown">
+                        <div class="selected">None</div>
+                        <div class="options-container">
+                            <input type="text" class="search-bar" placeholder="Find mob...">
+                            <ul class="options"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="support-container">
+                <a href="https://www.roblox.com/users/53895278/inventory#!/game-passes" target="_blank" class="support-btn">
+                    <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                    Support This Creator
+                </a>
+            </div>
+        </div>
+
+        <div class="side-panel">
+            <h2 class="adv-title" style="margin-bottom: 0; text-align: center;">Advanced Data</h2>
+            
+            <div id="bossTracker" style="display: none;">
+                <div class="adv-title" style="font-size: 0.75rem;">Boss Drop Requirement</div>
+                <div class="adv-row">
+                    <label>Required Damage (%)</label>
+                    <div id="bossDropPercentDisplay" style="color: var(--accent); font-weight: bold; font-size: 0.9rem;">10%</div>
+                </div>
+                <div class="info-box" style="margin-top: 10px; padding: 1rem;">
+                    <span class="label">Total DMG Needed</span>
+                    <div id="bossDamageNeeded" class="value" style="color: var(--accent); font-size: 1.3rem;">0</div>
+                </div>
+            </div>
+
+            <div id="farmTracker" style="display: none;">
+                <div class="adv-title" style="font-size: 0.75rem;">Mob Farm Tracker</div>
+                <div class="info-box" style="margin-bottom: 15px; padding: 1rem;">
+                    <span class="label">Time to Next SP Goal</span>
+                    <div id="farmTimeNeeded" class="value" style="color: var(--accent); font-size: 1.8rem;">0</div>
+                </div>
+            </div>
+
+            <div class="info-box" style="text-align: left; padding: 1.2rem;">
+                <span class="label" id="infoTitle" style="text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 10px;">Game Guide</span>
+                <p class="adv-text" id="infoText">
+                    Select a Boss or Mob to see specific information, tips, and weaknesses here!
+                </p>
+            </div>
+
+            <div class="info-box" style="text-align: left; padding: 1.2rem;">
+                <span class="label" style="text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 10px;">Tips</span>
+                <p class="adv-text">
+                    • <strong>Pro Tip:</strong> Click Enter after typing your SP. (1T,1B etc)<br><br>
+                    • Selecting a Mob calculates how long until you reach the next SP milestone.(You need to 1shot it)
+                </p>
+            </div>
         </div>
 
     </div>
 
-    <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
