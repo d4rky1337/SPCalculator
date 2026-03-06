@@ -44,37 +44,36 @@ const bosses = {
 };
 
 const mobs = {
-    "None": { health: 0, physical: 0, magic: 0, spPerMin: { physical: 0, magic: 0 }, info: "Select a Boss or Mob to see specific information here." },
-    "Snail": { health: 10, physical: 0, magic: 0, spPerMin: { physical: 600, magic: 600 }, info: "The weakest mob in the game. Good for absolute beginners." },
-    "Pig": { health: 800, physical: 0, magic: 0, spPerMin: { physical: 2000, magic: 1840 }, info: "Pigs spawn in the starting area. Physical weapons farm them slightly faster." },
-    "Turtle": { health: 2500, physical: 0.1, magic: 0, spPerMin: { physical: 4000, magic: 4600 }, info: "Turtles have shells giving them 10% physical resistance. Magic is better here." },
-    "Caveman": { health: 4500, physical: 0, magic: 0, spPerMin: { physical: 11000, magic: 12000 }, info: "Found in GrassLand near chief." },
-    "Spider": { health: 12500, physical: 0, magic: 0.1, spPerMin: { physical: 18000, magic: 26000 }, info: "Spiders resist magic slightly. Watch out for their webs.<br>Can be found in the caves on the right side of GrassLand" },
-    "Mammoth": { health: 75000, physical: 0.2, magic: 0.1, spPerMin: { physical: 20000, magic: 24000 }, info: "Thick fur gives them 20% physical defense.<br>Can be found in the caves on the right side of GrassLand" },
-    "Viperbloom": { health: 125000, physical: 0, magic: 0, spPerMin: { physical: 38500, magic: 38500 }, info: "A dangerous plant. No resistances.<br>Find them in CurseLand" },
-    "Warlock": { health: 100000, physical: 0, magic: 0.2, spPerMin: { physical: 130000, magic: 143000 }, info: "Warlocks use magic, so they have 20% magic resistance.<br>Find them deep in the CurseLand." },
-    "Spartan": { health: 250000, physical: 0.2, magic: 0, spPerMin: { physical: 308000, magic: 352000 }, info: "Shields up! 20% physical resistance.<br>They are located in the castle above CurseLand." },
-    "Reaper": { health: 750000, physical: 0.1, magic: 0.2, spPerMin: { physical: 1170000, magic: 1260000 }, info: "Ghosts of the past.<br>Ironically you will find them in Heaven (jump on the clouds near chief)" },
-    "Angel": { health: 1500000, physical: 0.1, magic: 0.25, spPerMin: { physical: 2700000, magic: 3060000 }, info: "Holy beings with high magic defense.<br>These are agressive mobs, be careful." },
-    "Cowboy": { health: 15000000, physical: 0.1, magic: 0, spPerMin: { physical: 4200000, magic: 5200000 }, info: "Yeehaw! Found in the desert biome.<br>First mob you encounter in the area." },
-    "Ghost": { health: 60000000, physical: 0.2, magic: 0.8, spPerMin: { physical: 9020000, magic: 10030000 }, info: "Almost completely immune to magic attacks (80%). Use swords!.<br>They are found in the graveyards in the desert." },
-    "Totem Sentinal": { health: 250000000, physical: 0.2, magic: 0.2, spPerMin: { physical: 205000000, magic: 26500000 }, info: "A balanced defender.<br>You might skip him and go straight to mummies." },
-    "Mummy": { health: 500000000, physical: 0.3, magic: 0.1, spPerMin: { physical: 43000000, magic: 52000000 }, info: "Wrapped in bandages, providing physical defense.<br>Last mob before vulcano." },
-    "Blightleap": { health: 2500000000, physical: 0.1, magic: 0.3, spPerMin: { physical: 70500000, magic: 75000000 }, info: "A toxic frog creature.<br>First mob from vulcano." },
-    "Bonepicker": { health: 25000000000, physical: 0.3, magic: 0.3, spPerMin: { physical: 141000000, magic: 159000000 }, info: "Scavengers of the wasteland.<br>Next mob after BlightLeap." },
-    "Oculon": { health: 100000000000, physical: 0.1, magic: 0.7, spPerMin: { physical: 273000000, magic: 338000000 }, info: "A floating eye. Highly resistant to magic but weak against swords." },
-    "Magmaton": { health: 600000000000, physical: 0.1, magic: 0.2, spPerMin: { physical: 658000000, magic: 728000000 }, info: "Made of pure lava.<br>You'll kill a lot of these guys before getting to FairyLand.<br>You can start farming them when you can 3shot." },
-    "Knobble": { health: 1800000000000, physical: 0.1, magic: 0.25, spPerMin: { physical: 1050000000, magic: 1200000000 }, info: "Why isn't this thing called a gnome?<br>If you can kill this guy you escaped Magmaton Hell!" },
-    "Puffcap": { health: 11000000000000, physical: 0.3, magic: 0.3, spPerMin: { physical: 2050000000, magic: 9600 }, info: "A giant mushroom.<br>You might need Emberheart sword or Dragofeng for this guy." },
-    "Winxy": { health: 66000000000000, physical: 0, magic: 0.7, spPerMin: { physical: 8000, magic: 9600 }, info: "A fairy with incredibly high magic resistance." },
-    "Shellthorn": { health: 400000000000000, physical: 0.7, magic: 0.1, spPerMin: { physical: 8000, magic: 9600 }, info: "Heavily armored. 70% physical resistance.<br>0.5% change to drop Ruby 3 chest" },
+    "None": { health: 0, physical: 0, magic: 0, spReward: 0, info: "Select a Boss or Mob to see specific information here." },
+    "Snail": { health: 10, physical: 0, magic: 0, spReward: 10, info: "The weakest mob in the game. Good for absolute beginners." },
+    "Pig": { health: 800, physical: 0, magic: 0, spReward: 40, info: "Pigs spawn in the starting area. Physical weapons farm them slightly faster." },
+    "Turtle": { health: 2500, physical: 0.1, magic: 0, spReward: 100, info: "Turtles have shells giving them 10% physical resistance. Magic is better here." },
+    "Caveman": { health: 4500, physical: 0, magic: 0, spReward: 250, info: "Found in GrassLand near chief." },
+    "Spider": { health: 12500, physical: 0, magic: 0.1, spReward: 400, info: "Spiders resist magic slightly. Watch out for their webs.<br>Can be found in the caves on the right side of GrassLand" },
+    "Mammoth": { health: 75000, physical: 0.2, magic: 0.1, spReward: 1000, info: "Thick fur gives them 20% physical defense.<br>Can be found in the caves on the right side of GrassLand" },
+    "Viperbloom": { health: 125000, physical: 0, magic: 0, spReward: 1750, info: "A dangerous plant. No resistances.<br>Find them in CurseLand" },
+    "Warlock": { health: 100000, physical: 0, magic: 0.2, spReward: 3250, info: "Warlocks use magic, so they have 20% magic resistance.<br>Find them deep in the CurseLand." },
+    "Spartan": { health: 250000, physical: 0.2, magic: 0, spReward: 5500, info: "Shields up! 20% physical resistance.<br>They are located in the castle above CurseLand." },
+    "Reaper": { health: 750000, physical: 0.1, magic: 0.2, spReward: 14000, info: "Ghosts of the past.<br>Ironically you will find them in Heaven (jump on the clouds near chief)" },
+    "Angel": { health: 1500000, physical: 0.1, magic: 0.25, spReward: 30000, info: "Holy beings with high magic defense.<br>These are agressive mobs, be careful." },
+    "Cowboy": { health: 15000000, physical: 0.1, magic: 0, spReward: 50000, info: "Yeehaw! Found in the desert biome.<br>First mob you encounter in the area." },
+    "Ghost": { health: 60000000, physical: 0.2, magic: 0.8, spReward: 110000, info: "Almost completely immune to magic attacks (80%). Use swords!.<br>They are found in the graveyards in the desert." },
+    "Totem Sentinal": { health: 250000000, physical: 0.2, magic: 0.2, spReward: 250000, info: "A balanced defender.<br>You might skip him and go straight to mummies." },
+    "Mummy": { health: 500000000, physical: 0.3, magic: 0.1, spReward: 500000, info: "Wrapped in bandages, providing physical defense.<br>Last mob before vulcano." },
+    "Blightleap": { health: 2500000000, physical: 0.1, magic: 0.3, spReward: 750000, info: "A toxic frog creature.<br>First mob from vulcano." },
+    "Bonepicker": { health: 25000000000, physical: 0.3, magic: 0.3, spReward: 1500000, info: "Scavengers of the wasteland.<br>Next mob after BlightLeap." },
+    "Oculon": { health: 100000000000, physical: 0.1, magic: 0.7, spReward: 3250000, info: "A floating eye. Highly resistant to magic but weak against swords." },
+    "Magmaton": { health: 600000000000, physical: 0.1, magic: 0.2, spReward: 7000000, info: "Made of pure lava.<br>You'll kill a lot of these guys before getting to FairyLand.<br>You can start farming them when you can 3shot." },
+    "Knobble": { health: 1800000000000, physical: 0.1, magic: 0.25, spReward: 12000000, info: "Why isn't this thing called a gnome?<br>If you can kill this guy you escaped Magmaton Hell!" },
+    "Puffcap": { health: 11000000000000, physical: 0.3, magic: 0.3, spReward: 24000000, info: "A giant mushroom.<br>You might need Emberheart sword or Dragofeng for this guy." },
+    "Winxy": { health: 66000000000000, physical: 0, magic: 0.7, spReward: 50000000, info: "A fairy with incredibly high magic resistance." },
+    "Shellthorn": { health: 400000000000000, physical: 0.7, magic: 0.1, spReward: 100000000, info: "Heavily armored. 70% physical resistance.<br>0.5% change to drop Ruby 3 chest" },
 };
 
 let currentWeaponType = "physical";
 let currentWeapon = "Punch";
 let currentBoss = "None";
 let currentMob = "None";
-
 
 function formatNumber(num) {
     if (num === Infinity || isNaN(num)) return "0";
@@ -214,15 +213,30 @@ function calculate() {
                     farmTime1x.style.fontSize = "1rem";
                     farmTime2x.style.fontSize = "1rem";
                 } else {
-                    // Your entered SP gain acts as the 2x SP rate
-                    let gainPerMin2x = target.spPerMin ? (target.spPerMin[currentWeaponType] || 0) : 0;
-                    // Normal players get exactly half
-                    let gainPerMin1x = gainPerMin2x / 2;
+                    
+                    // --- DYNAMIC KILL RATE LOGIC ---
+                    let baseSP = target.spReward || 0;
+                    let isMagic = currentWeaponType === "magic";
+                    let killsPerMin = 48; // Physical defaults to 48
+
+                    if (isMagic) {
+                        const blightleapIndex = mobKeys.indexOf("Blightleap");
+                        // If it's Blightleap or earlier, you get 35 kills/min. If after, 51 kills/min.
+                        if (currentIndex <= blightleapIndex) {
+                            killsPerMin = 35;
+                        } else {
+                            killsPerMin = 51;
+                        }
+                    }
+
+                    // Calculate Gains
+                    let gainPerMin1x = baseSP * killsPerMin;
+                    let gainPerMin2x = gainPerMin1x * 2;
 
                     if (nextRequiredSP > userSP) {
                         let deficit = nextRequiredSP - userSP;
-                        let reqMins2x = gainPerMin2x > 0 ? Math.ceil(deficit / gainPerMin2x) : "∞";
                         let reqMins1x = gainPerMin1x > 0 ? Math.ceil(deficit / gainPerMin1x) : "∞";
+                        let reqMins2x = gainPerMin2x > 0 ? Math.ceil(deficit / gainPerMin2x) : "∞";
                         
                         farmTime1x.textContent = reqMins1x === "∞" ? "∞" : formatTime(reqMins1x);
                         farmTime2x.textContent = reqMins2x === "∞" ? "∞" : formatTime(reqMins2x);
