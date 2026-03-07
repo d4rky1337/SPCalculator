@@ -349,9 +349,12 @@
                 </div>
             </div>
 
-            <div id="farmTracker" style="display: none;">
+				<div id="farmTracker" style="display: none;">
                 <div class="adv-title" style="font-size: 0.75rem;">⏱️ Time to Next SP Goal</div>
-                <div class="row-split" style="margin-bottom: 15px;">
+                
+                <div id="bestWeaponTarget" style="text-align: center; color: var(--text-dim); font-size: 0.85rem; margin-bottom: 10px;">-</div>
+
+                <div class="row-split" style="margin-bottom: 5px;">
                     <div class="info-box">
                         <span class="label">1x SP</span>
                         <div id="farmTime1x" class="value" style="color: var(--accent); font-size: 1.3rem;">0</div>
@@ -361,6 +364,13 @@
                         <div id="farmTime2x" class="value" style="color: var(--secondary); font-size: 1.3rem;">0</div>
                     </div>
                 </div>
+                
+                <div style="text-align: center; margin-top: 15px;">
+                    <button id="toggleMoreWeaponsBtn" onclick="toggleMoreWeapons()" style="background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: var(--text-dim); padding: 6px 14px; border-radius: 5px; cursor: pointer; font-size: 0.75rem; font-family: inherit; transition: 0.2s;">Show more Weapons ▼</button>
+                </div>
+                
+                <div id="moreWeaponsContainer" style="display: none; margin-top: 10px; background: rgba(0,0,0,0.25); border: 1px solid var(--border); border-radius: 8px; padding: 12px; font-size: 0.75rem;">
+                    </div>
             </div>
 
             <div class="info-box" style="text-align: left; padding: 1.2rem;">
