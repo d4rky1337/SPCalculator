@@ -75,6 +75,8 @@ let currentWeapon = "Punch";
 let currentBoss = "None";
 let currentMob = "None";
 
+const premiumWeapons = ["Dragofeng", "Emberheart Sword"];
+
 function formatNumber(num) {
     if (num === Infinity || isNaN(num)) return "0";
     if (num < 1000) return Math.ceil(num).toString();
@@ -110,6 +112,19 @@ function formatTime(mins) {
     if (m === 0) return formatNumber(h) + "h";
     return formatNumber(h) + "h " + m + "m";
 }
+
+// Global UI toggle function
+window.toggleMoreWeapons = function() {
+    const container = document.getElementById('moreWeaponsContainer');
+    const btn = document.getElementById('toggleMoreWeaponsBtn');
+    if (container.style.display === 'none') {
+        container.style.display = 'block';
+        btn.innerHTML = 'Hide Weapons ▲';
+    } else {
+        container.style.display = 'none';
+        btn.innerHTML = 'Show more Weapons ▼';
+    }
+};
 
 // --- 4. MAIN UNIFIED CALCULATOR ---
 function calculate() {
@@ -169,6 +184,8 @@ function calculate() {
     const farmTime1x = document.getElementById('farmTime1x');
     const farmTime2x = document.getElementById('farmTime2x');
     const bossDropPercentDisplay = document.getElementById('bossDropPercentDisplay');
+    const bestWeaponTarget = document.getElementById('bestWeaponTarget');
+    const moreWeaponsContainer = document.getElementById('moreWeaponsContainer');
 
     if (currentBoss !== "None") {
         bossTracker.style.display = 'block';
@@ -197,52 +214,94 @@ function calculate() {
 
             if (nextMobName) {
                 let nextMob = mobs[nextMobName];
-                let nextRes = nextMob[currentWeaponType] || 0;
-                let nextRequiredSP = 0;
-                let isImmune = false;
+                
+                // 1. Compile and sort EVERY weapon (Except Elixir Staff)
+                let allWeapons = [];
+                for (const type in weapons) {
+                    let mobRes = nextMob[type] || 0;
+                    if (mobRes >= 1) continue; 
 
-                if (nextRes >= 1) {
-                    isImmune = true; 
-                } else {
-                    nextRequiredSP = nextMob.health / (weaponData.multiplier * (1 - nextRes));
+                    for (const wName in weapons[type]) {
+                        if (wName === "Elixir Staff") continue; // Exclude Elixir Staff
+                        
+                        let wData = weapons[type][wName];
+                        let wReqSP = nextMob.health / (wData.multiplier * (1 - mobRes));
+                        allWeapons.push({ name: wName, sp: wReqSP });
+                    }
                 }
+                allWeapons.sort((a, b) => a.sp - b.sp);
 
-                if (isImmune) {
-                    farmTime1x.textContent = "IMMUNE";
-                    farmTime2x.textContent = "IMMUNE";
-                    farmTime1x.style.fontSize = "1rem";
-                    farmTime2x.style.fontSize = "1rem";
+                if (allWeapons.length === 0) {
+                    farmTime1x.textContent = "IMMUNE"; farmTime2x.textContent = "IMMUNE";
+                    if(bestWeaponTarget) bestWeaponTarget.innerHTML = "No valid weapons found";
+                    if(moreWeaponsContainer) moreWeaponsContainer.innerHTML = "";
                 } else {
-                    
-                    // --- DYNAMIC KILL RATE LOGIC ---
+                    let bestW = allWeapons[0];
+
+                    // Update main UI title for the #1 weapon
+                    if (bestWeaponTarget) {
+                        let isPremium = premiumWeapons.includes(bestW.name);
+                        let nameColor = isPremium ? "var(--heart)" : "var(--text-main)";
+                        let premiumIcon = isPremium ? "✨ " : "";
+                        bestWeaponTarget.innerHTML = `Target: <strong style="color:${nameColor}">${premiumIcon}${bestW.name}</strong> (${formatNumber(bestW.sp)} SP)`;
+                    }
+
+                    // 2. Base calculations off CURRENT farming speed
                     let baseSP = target.spReward || 0;
                     let isMagic = currentWeaponType === "magic";
-                    let killsPerMin = 48; // Physical defaults to 48
+                    let killsPerMin = 48;
 
                     if (isMagic) {
                         const blightleapIndex = mobKeys.indexOf("Blightleap");
-                        // If it's Blightleap or earlier, you get 35 kills/min. If after, 51 kills/min.
-                        if (currentIndex <= blightleapIndex) {
-                            killsPerMin = 35;
-                        } else {
-                            killsPerMin = 51;
-                        }
+                        if (currentIndex <= blightleapIndex) killsPerMin = 35;
+                        else killsPerMin = 51;
                     }
 
-                    // Calculate Gains
                     let gainPerMin1x = baseSP * killsPerMin;
                     let gainPerMin2x = gainPerMin1x * 2;
 
-                    if (nextRequiredSP > userSP) {
-                        let deficit = nextRequiredSP - userSP;
-                        let reqMins1x = gainPerMin1x > 0 ? Math.ceil(deficit / gainPerMin1x) : "∞";
-                        let reqMins2x = gainPerMin2x > 0 ? Math.ceil(deficit / gainPerMin2x) : "∞";
+                    let calcTime = (reqSP, gain) => {
+                        if (reqSP <= userSP) return "READY!";
+                        if (gain <= 0) return "∞";
+                        return formatTime(Math.ceil((reqSP - userSP) / gain));
+                    };
+
+                    // Display main #1 weapon times
+                    farmTime1x.textContent = calcTime(bestW.sp, gainPerMin1x);
+                    farmTime2x.textContent = calcTime(bestW.sp, gainPerMin2x);
+
+                    // 3. Build HTML for the next 5 runner-up weapons
+                    let runnerUpHTML = "";
+                    let numToShow = Math.min(allWeapons.length, 6); // Index 1 through 5 (Shows 5 runner-ups)
+
+                    for (let i = 1; i < numToShow; i++) {
+                        let w = allWeapons[i];
+                        let isPremium = premiumWeapons.includes(w.name);
+                        let wColor = isPremium ? "var(--heart)" : "#cccccc";
+                        let wIcon = isPremium ? "✨ " : "";
                         
-                        farmTime1x.textContent = reqMins1x === "∞" ? "∞" : formatTime(reqMins1x);
-                        farmTime2x.textContent = reqMins2x === "∞" ? "∞" : formatTime(reqMins2x);
-                    } else {
-                        farmTime1x.textContent = "READY!";
-                        farmTime2x.textContent = "READY!";
+                        let t1x = calcTime(w.sp, gainPerMin1x);
+                        let t2x = calcTime(w.sp, gainPerMin2x);
+                        
+                        // Don't add a bottom border to the very last item in the list
+                        let borderStyle = (i === numToShow - 1) ? "" : "border-bottom: 1px solid var(--border); margin-bottom: 8px; padding-bottom: 8px;";
+
+                        runnerUpHTML += `
+                            <div style="${borderStyle}">
+                                <div style="display:flex; justify-content: space-between; margin-bottom: 4px;">
+                                    <span style="color: ${wColor}; font-weight: 600;">${wIcon}${w.name}</span>
+                                    <span style="color: var(--text-main); font-weight: 600;">${formatNumber(w.sp)} SP</span>
+                                </div>
+                                <div style="display:flex; justify-content: space-between; color: var(--text-dim); font-size: 0.7rem;">
+                                    <span>1x: <span style="color:var(--accent); font-weight: bold;">${t1x}</span></span>
+                                    <span>2x: <span style="color:var(--secondary); font-weight: bold;">${t2x}</span></span>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    if(moreWeaponsContainer) {
+                        moreWeaponsContainer.innerHTML = runnerUpHTML || `<div style="text-align:center; color:var(--text-dim);">No other valid weapons.</div>`;
                     }
                 }
             } else {
@@ -250,6 +309,10 @@ function calculate() {
                 farmTime2x.textContent = "MAX!";
                 farmTime1x.style.fontSize = "1.1rem";
                 farmTime2x.style.fontSize = "1.1rem";
+                
+                if(bestWeaponTarget) bestWeaponTarget.innerHTML = "You have reached the end!";
+                if(moreWeaponsContainer) moreWeaponsContainer.innerHTML = "";
+                document.getElementById('toggleMoreWeaponsBtn').style.display = 'none'; // hide button at the end
             }
         }
     }
@@ -337,6 +400,11 @@ setupDropdown('mobDropdown', Object.keys(mobs), (val) => {
         currentBoss = "None"; 
         document.querySelector('#bossDropdown .selected').textContent = "None"; 
     }
+    
+    // Ensure the toggle button resets/unhides when selecting a new mob
+    const btn = document.getElementById('toggleMoreWeaponsBtn');
+    if (btn) btn.style.display = 'inline-block';
+    
     calculate();
 });
 
