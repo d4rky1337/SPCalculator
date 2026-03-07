@@ -63,7 +63,7 @@ const mobs = {
     "Blightleap": { health: 2500000000, physical: 0.1, magic: 0.3, spReward: 750000, info: "A toxic frog creature.<br>First mob from vulcano." },
     "Bonepicker": { health: 25000000000, physical: 0.3, magic: 0.3, spReward: 1500000, info: "Scavengers of the wasteland.<br>Next mob after BlightLeap." },
     "Oculon": { health: 100000000000, physical: 0.1, magic: 0.7, spReward: 3250000, info: "A floating eye. Highly resistant to magic but weak against swords." },
-    "Magmaton": { health: 600000000000, physical: 0.1, magic: 0.2, spReward: 7000000, info: "Made of pure lava.<br>You'll kill a lot of these guys before getting to FairyLand.<br>You can start farming them when you can 3shot." },
+    "Magmaton": { health: 600000000000, physical: 0.1, magic: 0.2, spReward: 7000000, info: "Made of pure lava.<br>You'll kill a lot of these guys before getting to FairyLand.<br>If your staff kills them in 2-3 shots you can farm them." },
     "Knobble": { health: 1800000000000, physical: 0.1, magic: 0.25, spReward: 12000000, info: "Why isn't this thing called a gnome?<br>If you can kill this guy you escaped Magmaton Hell!" },
     "Puffcap": { health: 11000000000000, physical: 0.3, magic: 0.3, spReward: 24000000, info: "A giant mushroom.<br>You might need Emberheart sword or Dragofeng for this guy." },
     "Winxy": { health: 66000000000000, physical: 0, magic: 0.7, spReward: 50000000, info: "A fairy with incredibly high magic resistance." },
