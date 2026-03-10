@@ -276,10 +276,15 @@
                 <p>Calculate Damage & Requirements</p>
             </header>
 
-            <div class="inputs">
+<div class="inputs">
                 <div class="group">
                     <label style="color: var(--secondary);">Your Skill Points (SP)</label>
                     <input type="text" id="playerStat" class="stat-input" placeholder="Enter SP (e.g. 1.5M, 10B)" autocomplete="off">
+                </div>
+
+                <div class="group">
+                    <label style="color: var(--secondary);">Friend Boost (%)</label>
+                    <input type="number" id="friendBoost" class="stat-input" placeholder="Enter boost % (e.g. 20)" autocomplete="off" min="0">
                 </div>
 
                 <div class="group">
@@ -349,12 +354,9 @@
                 </div>
             </div>
 
-				<div id="farmTracker" style="display: none;">
-                <div class="adv-title" style="font-size: 0.75rem;">⏱️ Time to Next Mob</div>
-                
-                <div id="bestWeaponTarget" style="text-align: center; color: var(--text-dim); font-size: 0.85rem; margin-bottom: 10px;">-</div>
-
-                <div class="row-split" style="margin-bottom: 5px;">
+            <div id="farmTracker" style="display: none;">
+                <div class="adv-title" style="font-size: 0.75rem;">⏱️ Time to Next SP Goal</div>
+                <div class="row-split" style="margin-bottom: 15px;">
                     <div class="info-box">
                         <span class="label">1x SP</span>
                         <div id="farmTime1x" class="value" style="color: var(--accent); font-size: 1.3rem;">0</div>
@@ -364,13 +366,6 @@
                         <div id="farmTime2x" class="value" style="color: var(--secondary); font-size: 1.3rem;">0</div>
                     </div>
                 </div>
-                
-                <div style="text-align: center; margin-top: 15px;">
-                    <button id="toggleMoreWeaponsBtn" onclick="toggleMoreWeapons()" style="background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: var(--text-dim); padding: 6px 14px; border-radius: 5px; cursor: pointer; font-size: 0.75rem; font-family: inherit; transition: 0.2s;">Show more Weapons ▼</button>
-                </div>
-                
-                <div id="moreWeaponsContainer" style="display: none; margin-top: 10px; background: rgba(0,0,0,0.25); border: 1px solid var(--border); border-radius: 8px; padding: 12px; font-size: 0.75rem;">
-                    </div>
             </div>
 
             <div class="info-box" style="text-align: left; padding: 1.2rem;">
@@ -386,7 +381,6 @@
                     <strong>Pro Tip:</strong> Click Enter after typing your SP. (1T, 1B etc)<br>
                     <strong>How to calculate time needed to farm</strong><br>
                     • Selecting a Mob calculates how long until you reach the next SP milestone.(You need to 1shot it)<br>
-                    • It will calculate based on the weapon you are using and current SP.<br>
                     <strong>Sword or staff?</strong><br>
                     • Most of the mobs have a lower physical armour which would require less SP in attack.<br>
                     • The advantage of the staff is faster SP gain through farming, easier boss fights and not having to worry about HP and REGEN.
