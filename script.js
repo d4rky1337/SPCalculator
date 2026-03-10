@@ -63,7 +63,7 @@ const mobs = {
     "Blightleap": { health: 2500000000, physical: 0.1, magic: 0.3, spReward: 750000, info: "A toxic frog creature.<br>First mob from vulcano." },
     "Bonepicker": { health: 25000000000, physical: 0.3, magic: 0.3, spReward: 1500000, info: "Scavengers of the wasteland.<br>Next mob after BlightLeap." },
     "Oculon": { health: 100000000000, physical: 0.1, magic: 0.7, spReward: 3250000, info: "A floating eye. Highly resistant to magic but weak against swords." },
-    "Magmaton": { health: 600000000000, physical: 0.1, magic: 0.2, spReward: 7000000, info: "Made of pure lava.<br>You'll kill a lot of these guys before getting to FairyLand.<br>If your staff kills them in 2-3 shots you can farm them." },
+    "Magmaton": { health: 600000000000, physical: 0.1, magic: 0.2, spReward: 7000000, info: "Made of pure lava.<br>You'll kill a lot of these guys before getting to FairyLand.<br>You can start farming them when you can 3shot." },
     "Knobble": { health: 1800000000000, physical: 0.1, magic: 0.25, spReward: 12000000, info: "Why isn't this thing called a gnome?<br>If you can kill this guy you escaped Magmaton Hell!" },
     "Puffcap": { health: 11000000000000, physical: 0.3, magic: 0.3, spReward: 24000000, info: "A giant mushroom.<br>You might need Emberheart sword or Dragofeng for this guy." },
     "Winxy": { health: 66000000000000, physical: 0, magic: 0.7, spReward: 50000000, info: "A fairy with incredibly high magic resistance." },
@@ -131,6 +131,11 @@ function calculate() {
     const weaponData = weapons[currentWeaponType][currentWeapon];
     const playerStatInput = document.getElementById('playerStat');
     let userSP = parseAbbreviatedNumber(playerStatInput.value);
+
+    // Friend Boost Logic
+    const friendBoostInput = document.getElementById('friendBoost');
+    let friendBoostVal = parseFloat(friendBoostInput ? friendBoostInput.value : 0) || 0;
+    let boostMultiplier = 1 + (friendBoostVal / 100);
 
     let target = null;
     if (currentBoss !== "None") target = bosses[currentBoss];
@@ -238,7 +243,6 @@ function calculate() {
                 } else {
                     let bestW = allWeapons[0];
 
-                    // Update main UI title for the #1 weapon
                     if (bestWeaponTarget) {
                         let isPremium = premiumWeapons.includes(bestW.name);
                         let nameColor = isPremium ? "var(--heart)" : "var(--text-main)";
@@ -257,7 +261,8 @@ function calculate() {
                         else killsPerMin = 51;
                     }
 
-                    let gainPerMin1x = baseSP * killsPerMin;
+                    // ADDED: Multiply the final gains by the Friend Boost multiplier
+                    let gainPerMin1x = baseSP * killsPerMin * boostMultiplier;
                     let gainPerMin2x = gainPerMin1x * 2;
 
                     let calcTime = (reqSP, gain) => {
@@ -272,7 +277,7 @@ function calculate() {
 
                     // 3. Build HTML for the next 5 runner-up weapons
                     let runnerUpHTML = "";
-                    let numToShow = Math.min(allWeapons.length, 6); // Index 1 through 5 (Shows 5 runner-ups)
+                    let numToShow = Math.min(allWeapons.length, 6); 
 
                     for (let i = 1; i < numToShow; i++) {
                         let w = allWeapons[i];
@@ -283,7 +288,6 @@ function calculate() {
                         let t1x = calcTime(w.sp, gainPerMin1x);
                         let t2x = calcTime(w.sp, gainPerMin2x);
                         
-                        // Don't add a bottom border to the very last item in the list
                         let borderStyle = (i === numToShow - 1) ? "" : "border-bottom: 1px solid var(--border); margin-bottom: 8px; padding-bottom: 8px;";
 
                         runnerUpHTML += `
@@ -312,13 +316,13 @@ function calculate() {
                 
                 if(bestWeaponTarget) bestWeaponTarget.innerHTML = "You have reached the end!";
                 if(moreWeaponsContainer) moreWeaponsContainer.innerHTML = "";
-                document.getElementById('toggleMoreWeaponsBtn').style.display = 'none'; // hide button at the end
+                document.getElementById('toggleMoreWeaponsBtn').style.display = 'none'; 
             }
         }
     }
 }
 
-
+// Add event listeners
 const inputField = document.getElementById('playerStat');
 inputField.addEventListener('input', calculate);
 inputField.addEventListener('keydown', e => { if (e.key === 'Enter') inputField.blur(); });
@@ -327,6 +331,12 @@ inputField.addEventListener('change', e => {
     if(val > 0) e.target.value = val.toLocaleString('en-US'); 
     calculate();
 });
+
+// Listener for Friend Boost
+const friendBoostField = document.getElementById('friendBoost');
+if (friendBoostField) {
+    friendBoostField.addEventListener('input', calculate);
+}
 
 function setupDropdown(id, optionsData, callback) {
     const dropdown = document.getElementById(id);
@@ -371,7 +381,6 @@ function setupDropdown(id, optionsData, callback) {
     renderOptions();
 }
 
-
 setupDropdown('weaponTypeDropdown', ["Physical", "Magic"], (val) => {
     currentWeaponType = val.toLowerCase();
     const wList = Object.keys(weapons[currentWeaponType]);
@@ -401,7 +410,6 @@ setupDropdown('mobDropdown', Object.keys(mobs), (val) => {
         document.querySelector('#bossDropdown .selected').textContent = "None"; 
     }
     
-    // Ensure the toggle button resets/unhides when selecting a new mob
     const btn = document.getElementById('toggleMoreWeaponsBtn');
     if (btn) btn.style.display = 'inline-block';
     
